@@ -18,6 +18,8 @@ libraryDependencies ++= {
     "io.spray"              %% "spray-json"                   % "1.3.2"                        withSources() withJavadoc(),
     "com.google.code.gson"  %  "gson"                         % "2.3"                          withSources() withJavadoc(),
     "org.twitter4j"         %  "twitter4j-core"               % "3.0.3"                        withSources() withJavadoc(),
+    "edu.stanford.nlp"      %  "stanford-corenlp"             % "3.5.2"                        withSources() withJavadoc(),
+    "edu.stanford.nlp"      %  "stanford-corenlp"             % "3.5.2" classifier "models"    ,
     "org.specs2"            %% "specs2-core"                  % specsVersion      % "test"     withSources() withJavadoc(),
     "org.specs2"            %% "specs2-scalacheck"            % specsVersion      % "test"     withSources() withJavadoc()
   )
