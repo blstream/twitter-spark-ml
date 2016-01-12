@@ -1,9 +1,10 @@
 package com.blstream.twitterspark
 
 import java.util.Properties
-
+import Predef.{ any2stringadd => _, StringAdd => _, _ }
 import edu.stanford.nlp.ling.CoreAnnotations
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations
+import edu.stanford.nlp.pipeline.CoreNLPProtos.Sentiment
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations.SentimentAnnotatedTree
 import org.apache.spark.SparkConf
@@ -33,7 +34,7 @@ trait SentimentAnalysis {
     val tweets = TwitterUtils.createStream(ssc, someAuth)
     val englishTweets = tweets.filter(_.getUser.getLang == "en")
 
-    englishTweets.flatMap(s => predictSentiment(s.getText)).print()
+    englishTweets.map(s => predictSentiment(s.getText)).print()
 
     ssc.start()
     ssc.awaitTermination()
@@ -49,13 +50,26 @@ trait SentimentAnalysis {
 
     val pipeline = new StanfordCoreNLP(nlpProps)
     val ann = pipeline.process(text)
-    for (s <- ann.get(classOf[CoreAnnotations.SentencesAnnotation])) yield {
+    val ratedSentences = for (s <- ann.get(classOf[CoreAnnotations.SentencesAnnotation])) yield {
       val tree = s.get(classOf[SentimentAnnotatedTree])
 
-      (s, RNNCoreAnnotations.getPredictedClass(tree))
+      RatedSentence(s.toString, Option(Sentiment.valueOf(RNNCoreAnnotations.getPredictedClass(tree))))
     }
+
+    val (ws, rs) = ratedSentences.foldLeft((0, 0.0)) {
+      case ((charSum, ratingSum), RatedSentence(sentenceText, Some(sentiment))) =>
+        (charSum + sentenceText.length, ratingSum + sentiment.getNumber * sentenceText.length)
+      case (e, _) => e
+    }
+
+    val avgSentiment = rs / ws
+
+    if (avgSentiment.isInfinite || avgSentiment.isNaN) RatedTweet(text, None)
+    else RatedTweet(text, Option(Sentiment.valueOf(avgSentiment.round.toInt)))
+
   }
 
 }
 
-case class RatedTweet(positive: Set[String], negative: Set[String], tweet: String)
+case class RatedSentence(text: String, sentiment: Option[Sentiment])
+case class RatedTweet(text: String, sentiment: Option[Sentiment])
