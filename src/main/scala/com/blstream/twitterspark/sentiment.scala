@@ -14,6 +14,11 @@ import scala.collection.JavaConversions._
 
 object SentimentAnalysisMain extends SentimentAnalysis with Serializable {
   def main(args: Array[String]) {
+    import org.apache.log4j.Logger
+    import org.apache.log4j.Level
+
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    Logger.getLogger("akka").setLevel(Level.ERROR)
     analyzeTweets()
   }
 }
