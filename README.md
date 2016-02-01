@@ -20,7 +20,7 @@ sbt assembly
 
 ### Train
 
-Go to Zeppelin notebook
+Go to Zeppelin notebook in `zeppelin-notebook.json`. To import you'll need Apache Zeppelin version 0.6.0 (at least).
 
 ### Predict
 
