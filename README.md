@@ -1,51 +1,39 @@
-# How to run the code
+# Spark/Twitter analysis demo
 
-# Status
-## todo
+## How to run the code
 
-* read tweets from Riak to Zeppelin notebook
-* save trained model to Riak
-* use model from Riak to predict language
+### Build with sbt assembly
 
-# Installation and configuration
-
-## Riak
-### Install on Ubuntu 15.10
-Download Debian Wheezy package from [Basho downloads page](https://docs.basho.com/riak/2.1.3/downloads/) and install
-
-### Create and activate bucket type
-```shell
-sudo riak-admin bucket-type create tweet-sets '{"props":{"datatype":"set"}}'
-sudo riak-admin bucket-type activate tweet-sets
-```
-
-
-## spark-riak-connector
-Copy from `<PROJECT_HOME>/lib` to local maven repo files:
-
-* `spark-riak-connector_2.10-1.1.0.jar` to `~/.m2/repository/com/basho/riak/spark-riak-connector_2.10/1.1.0/`
-* `spark-riak-connector-java_2.10-1.1.0.jar` to `~/.m2/repository/com/basho/riak/spark-riak-connector-java_2.10/1.1.0/`
-
-## Build with sbt assembly
+Tip: in case of OOM increase the heap size with ``-J-Xmx...``
 
 ```scala
 sbt assembly
 ```
 
-# How to use demo
+## Language prediction/detection
 
-## Get some tweets from current stream
+### Get some tweets from current stream
 
 ```shell
-<SPARK_HOME>/bin/spark-submit --class "com.blstream.twitterspark.DataImporterMain" --master local[4] target/scala-2.10/twitterspark-assembly-0.0.1.jar
+<SPARK_HOME>/bin/spark-submit --class "com.blstream.twitterspark.DataImporterMain" --master local[4] target/scala-2.11/twitterspark-assembly-0.0.1.jar
 ```
 
-## Train
+### Train
 
 Go to Zeppelin notebook
 
-## Predict
+### Predict
 
 ```shell
-<SPARK_HOME>/bin/spark-submit --class "com.blstream.twitterspark.PredictLangMain" --master local[4] target/scala-2.10/twitterspark-assembly-0.0.1.jar
+<SPARK_HOME>/bin/spark-submit --class "com.blstream.twitterspark.PredictLangMain" --master local[4] target/scala-2.11/twitterspark-assembly-0.0.1.jar
 ```
+
+## Live sentiment analysis
+
+To see a live stream of English tweets, with classified sentiment, run the following command:
+
+```shell
+$SPARK_HOME/bin/spark-submit --class "com.blstream.twitterspark.SentimentAnalysisMain" --master "local[4]" target/scala-2.11/twitterspark-assembly-0.0.1.jar
+```
+
+with `SPARK_HOME` set to point at your downloaded Apache Spark copy.

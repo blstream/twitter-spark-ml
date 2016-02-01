@@ -4,9 +4,7 @@ organization := "com.blstream"
 
 version := "0.0.1"
 
-scalaVersion := "2.10.6"
-
-resolvers += "Local Maven" at Path.userHome.asFile.toURI.toURL + ".m2/repository"
+scalaVersion := "2.11.7"
 
 libraryDependencies ++= {
   val specsVersion = "2.4.17"
@@ -20,9 +18,8 @@ libraryDependencies ++= {
     "io.spray"              %% "spray-json"                   % "1.3.2"                        withSources() withJavadoc(),
     "com.google.code.gson"  %  "gson"                         % "2.3"                          withSources() withJavadoc(),
     "org.twitter4j"         %  "twitter4j-core"               % "3.0.3"                        withSources() withJavadoc(),
-    "com.basho.riak"        %  "riak-client"                  % "2.0.3"                        withSources() withJavadoc(),
-    "com.basho.riak"        %% "spark-riak-connector"         % "1.1.0",
-    "com.basho.riak"        %% "spark-riak-connector-java"    % "1.1.0",
+    "edu.stanford.nlp"      %  "stanford-corenlp"             % "3.5.2"                        withSources() withJavadoc(),
+    "edu.stanford.nlp"      %  "stanford-corenlp"             % "3.5.2" classifier "models"    ,
     "org.specs2"            %% "specs2-core"                  % specsVersion      % "test"     withSources() withJavadoc(),
     "org.specs2"            %% "specs2-scalacheck"            % specsVersion      % "test"     withSources() withJavadoc()
   )
