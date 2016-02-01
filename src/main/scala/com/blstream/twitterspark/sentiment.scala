@@ -25,7 +25,7 @@ object SentimentAnalysisMain extends SentimentAnalysis with Serializable {
     Logger.getLogger("org").setLevel(Level.ERROR)
     Logger.getLogger("akka").setLevel(Level.ERROR)
 
-    analyzeTweets()
+    analyzeTweets(args)
   }
 }
 
@@ -33,11 +33,11 @@ trait SentimentAnalysis {
 
   import OAuthConfig._
 
-  def analyzeTweets() = {
+  def analyzeTweets(filters: Array[String]) = {
     val conf = new SparkConf().setAppName("SentimentTweetDemo")
     val ssc = new StreamingContext(conf, Seconds(5))
 
-    val tweets = TwitterUtils.createStream(ssc, someAuth)
+    val tweets = TwitterUtils.createStream(ssc, someAuth, filters)
     val englishTweets = tweets.filter(s => detectLanguage(s.getText).exists(_.equalsIgnoreCase("en")))
 
     DetectorFactory.loadProfile("/home/pk/src/rnd_scala/twitterspark/src/main/resources/profiles")
